@@ -1,0 +1,11 @@
+[package]
+name = "lazuli"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
+
+anyhow = "1.0"
+async-std = { version = "1.12", features = ["attributes"] }
+tiberius = "0.11"
+
