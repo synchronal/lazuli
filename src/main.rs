@@ -1,12 +1,12 @@
 use async_std::net::TcpStream;
-use std::env;
-use tiberius::{AuthMethod, Client, Config, EncryptionLevel};
+use tiberius::{Client, Config};
 
 use lazuli::cli::CLI;
+use lazuli::config;
 
 #[async_std::main]
 async fn main() -> anyhow::Result<()> {
-  let (args, config) = config();
+  let (args, config) = config::parse();
 
   let tcp = connect(&args, &config).await?;
   let mut client = Client::connect(config, tcp).await?;
@@ -27,34 +27,6 @@ async fn main() -> anyhow::Result<()> {
   };
 
   Ok(())
-}
-
-fn config() -> (CLI, Config) {
-  let args = CLI::new();
-  let mut config = Config::new();
-
-  let pwd = match (&args.password, env::var("AZURE_SQL_PASSWORD")) {
-    (&false, Ok(v)) => v,
-    (&false, Err(_e)) => panic!("AZURE_SQL_PASSWORD must be set if --password is not specified"),
-    (&true, _) => rpassword::prompt_password("Password: ").unwrap(),
-  };
-
-  config.host(&args.server);
-  config.port(args.port);
-  config.database(&args.database);
-  config.authentication(AuthMethod::sql_server(&args.username, pwd));
-  if args.no_encryption {
-    config.encryption(EncryptionLevel::NotSupported)
-  };
-  config.trust_cert(); // on production, it is not a good idea to do this
-  if args.verbose {
-    println!(
-      "connection: {}:[redacted]@{}/{}",
-      args.username, args.server, args.database
-    )
-  };
-
-  (args, config)
 }
 
 async fn connect(args: &CLI, config: &Config) -> anyhow::Result<TcpStream> {
