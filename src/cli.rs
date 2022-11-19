@@ -25,6 +25,9 @@ pub struct CLI {
   /// Disable encryption, for instance when connecting on localhost
   #[clap(long, default_value_t = false)]
   pub no_encryption: bool,
+
+  #[clap(long, default_value_t = false)]
+  pub verbose: bool,
 }
 
 impl Default for CLI {

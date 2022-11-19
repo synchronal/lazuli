@@ -23,10 +23,19 @@ async fn main() -> anyhow::Result<()> {
     config.encryption(EncryptionLevel::NotSupported)
   };
   config.trust_cert(); // on production, it is not a good idea to do this
+  if args.verbose {
+    println!(
+      "connection: {}:[redacted]@{}/{}",
+      args.username, args.server, args.database
+    )
+  };
 
   let tcp = connect(&args, &config).await?;
   let mut client = Client::connect(config, tcp).await?;
-  let query = args.query.clone().join(" ");
+  let query = to_query(&args);
+  if args.verbose {
+    println!("query: {:?}", query)
+  };
 
   let mut stream = client.query(query, &[]).await?;
 
@@ -55,4 +64,8 @@ async fn connect(args: &CLI, config: &Config) -> anyhow::Result<TcpStream> {
   tcp.set_nodelay(true)?;
 
   Ok(tcp)
+}
+
+fn to_query(args: &CLI) -> String {
+  args.query.clone().join(" ")
 }
