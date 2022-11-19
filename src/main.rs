@@ -25,15 +25,18 @@ async fn main() -> anyhow::Result<()> {
 
   let tcp = connect(&args, &config).await?;
   let mut client = Client::connect(config, tcp).await?;
+  let query = args.query.clone().join(" ");
 
-  let mut stream = client.query("SELECT @P1 AS first", &[&1i32]).await?;
+  let mut stream = client.query(query, &[]).await?;
 
-  let cols = stream.columns().await?.unwrap();
-  println!("cols: {:?}", cols);
-
-  if let Ok(results) = stream.into_results().await {
-    println!("results: {:?}", results);
-  }
+  if let Some(cols) = stream.columns().await? {
+    println!("cols: {:?}", cols);
+    if let Ok(results) = stream.into_results().await {
+      println!("results: {:?}", results);
+    }
+  } else {
+    eprintln!("No columns returned from query");
+  };
 
   Ok(())
 }

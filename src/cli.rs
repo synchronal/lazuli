@@ -12,6 +12,9 @@ pub struct CLI {
   #[clap(long, short, default_value = "sa")]
   pub username: String,
 
+  #[arg(default_value = "")]
+  pub query: Vec<String>,
+
   /// Ask for the password
   #[clap(long, short, default_value_t = false)]
   pub password: bool,
