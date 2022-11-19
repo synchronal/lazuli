@@ -9,7 +9,7 @@ anyhow = "1.0"
 async-std = { version = "1.12", features = ["attributes"] }
 clap = { version = "4.0", features = ["derive"] }
 rpassword = "7.1"
-tiberius = "0.11"
+tiberius = { version = "0.11", default_features = false, features = ["tds73", "vendored-openssl"] }
 
 [features]
 # Treat warnings as a build error.
