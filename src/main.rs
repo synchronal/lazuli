@@ -6,6 +6,30 @@ use lazuli::cli::CLI;
 
 #[async_std::main]
 async fn main() -> anyhow::Result<()> {
+  let (args, config) = config();
+
+  let tcp = connect(&args, &config).await?;
+  let mut client = Client::connect(config, tcp).await?;
+  let query = to_query(&args);
+  if args.verbose {
+    println!("query: {:?}", query)
+  };
+
+  let mut stream = client.query(query, &[]).await?;
+
+  if let Some(cols) = stream.columns().await? {
+    println!("cols: {:?}", cols);
+    if let Ok(results) = stream.into_results().await {
+      println!("results: {:?}", results);
+    }
+  } else {
+    eprintln!("No columns returned from query");
+  };
+
+  Ok(())
+}
+
+fn config() -> (CLI, Config) {
   let args = CLI::new();
   let mut config = Config::new();
 
@@ -30,25 +54,7 @@ async fn main() -> anyhow::Result<()> {
     )
   };
 
-  let tcp = connect(&args, &config).await?;
-  let mut client = Client::connect(config, tcp).await?;
-  let query = to_query(&args);
-  if args.verbose {
-    println!("query: {:?}", query)
-  };
-
-  let mut stream = client.query(query, &[]).await?;
-
-  if let Some(cols) = stream.columns().await? {
-    println!("cols: {:?}", cols);
-    if let Ok(results) = stream.into_results().await {
-      println!("results: {:?}", results);
-    }
-  } else {
-    eprintln!("No columns returned from query");
-  };
-
-  Ok(())
+  (args, config)
 }
 
 async fn connect(args: &CLI, config: &Config) -> anyhow::Result<TcpStream> {
