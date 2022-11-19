@@ -1,6 +1,7 @@
 use clap::Parser;
 
 #[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
 pub struct CLI {
   #[clap(long, short, default_value = "127.0.0.1")]
   pub server: String,
