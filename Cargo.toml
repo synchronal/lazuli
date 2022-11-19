@@ -1,7 +1,8 @@
 [package]
-name = "lazuli"
-version = "0.0.1"
 edition = "2021"
+name = "lazuli"
+rust-version = "1.65"
+version = "0.0.1"
 
 [dependencies]
 
