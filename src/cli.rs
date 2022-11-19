@@ -9,6 +9,9 @@ pub struct CLI {
   #[clap(long, default_value_t = 1433)]
   pub port: u16,
 
+  #[clap(long, short)]
+  pub database: String,
+
   #[clap(long, short, default_value = "sa")]
   pub username: String,
 

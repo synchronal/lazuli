@@ -17,6 +17,7 @@ async fn main() -> anyhow::Result<()> {
 
   config.host(&args.server);
   config.port(args.port);
+  config.database(&args.database);
   config.authentication(AuthMethod::sql_server(&args.username, pwd));
   if args.no_encryption {
     config.encryption(EncryptionLevel::NotSupported)
