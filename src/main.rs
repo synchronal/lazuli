@@ -1,3 +1,4 @@
+use anyhow::anyhow;
 use async_std::net::TcpStream;
 use tiberius::{Client, Config};
 
@@ -22,26 +23,23 @@ async fn main() -> anyhow::Result<()> {
     if let Ok(results) = stream.into_results().await {
       println!("results: {:?}", results);
     }
+    Ok(())
   } else {
-    eprintln!("No columns returned from query");
-  };
-
-  Ok(())
+    Err(anyhow!("No columns returned from query"))
+  }
 }
 
 async fn connect(args: &CLI, config: &Config) -> anyhow::Result<TcpStream> {
-  let tcp = if let Ok(tcp) = TcpStream::connect(config.get_addr()).await {
-    tcp
+  if let Ok(tcp) = TcpStream::connect(config.get_addr()).await {
+    tcp.set_nodelay(true)?;
+    Ok(tcp)
   } else {
     eprintln!(
       "Unable to connect to server. host = {}:{}, username = {}",
       args.server, args.port, args.username
     );
     std::process::exit(1);
-  };
-  tcp.set_nodelay(true)?;
-
-  Ok(tcp)
+  }
 }
 
 fn to_query(args: &CLI) -> String {
