@@ -9,11 +9,17 @@ use lazuli::config;
 async fn main() -> anyhow::Result<()> {
   let (args, config) = config::parse();
 
+  if args.verbose {
+    println!(
+      "[info] connection: {}:[redacted]@{}/{}",
+      args.username, args.server, args.database
+    )
+  };
   let tcp = connect(&args, &config).await?;
   let mut client = Client::connect(config, tcp).await?;
   let query = to_query(&args);
   if args.verbose {
-    println!("query: {:?}", query)
+    println!("[info] query: {:?}", query)
   };
 
   let mut stream = client.query(query, &[]).await?;

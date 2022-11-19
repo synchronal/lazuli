@@ -20,12 +20,6 @@ pub fn parse() -> (CLI, Config) {
     config.encryption(EncryptionLevel::NotSupported)
   };
   config.trust_cert(); // on production, it is not a good idea to do this
-  if args.verbose {
-    println!(
-      "connection: {}:[redacted]@{}/{}",
-      args.username, args.server, args.database
-    )
-  };
 
   (args, config)
 }
