@@ -67,5 +67,5 @@ async fn connect(args: &CLI, config: &Config) -> anyhow::Result<TcpStream> {
 }
 
 fn to_query(args: &CLI) -> String {
-  args.query.clone().join(" ")
+  args.query.clone().join(" ").replace("\\*", "*")
 }
