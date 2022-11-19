@@ -11,3 +11,6 @@ clap = { version = "4.0", features = ["derive"] }
 rpassword = "7.1"
 tiberius = "0.11"
 
+[features]
+# Treat warnings as a build error.
+strict = []
